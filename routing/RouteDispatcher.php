@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Routes;
+namespace App\Routing;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Http\Exception\NotFoundException;
 use League\Route\Router;
+use League\Route\Strategy\ApplicationStrategy;
 
 final class RouteDispatcher
 {
@@ -22,9 +23,14 @@ final class RouteDispatcher
             $_FILES,
         );
 
-        $router = new Router();
-        $routes = require __DIR__ . '/web.php';
+        $container = require dirname(__DIR__) . '/bootstrap/container.php';
+        $strategy = new ApplicationStrategy();
+        $strategy->setContainer($container);
 
+        $router = new Router();
+        $router->setStrategy($strategy);
+
+        $routes = require __DIR__ . '/web.php';
         (new RouteRegistrar($router))->register($routes);
 
         try {

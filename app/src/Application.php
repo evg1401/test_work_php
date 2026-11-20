@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Routes\RouteDispatcher;
+use App\Routing\RouteDispatcher;
 
 final class Application
 {

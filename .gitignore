@@ -6,4 +6,6 @@
 .env.*
 logs/*
 resources/*
+!resources/views/
+!resources/views/**
 vendor/
