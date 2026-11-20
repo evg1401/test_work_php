@@ -11,4 +11,10 @@ return [
         'controller' => ArticleController::class,
         'handler' => 'index',
     ],
+    [
+        'method' => 'GET',
+        'path' => '/articles/{id:number}',
+        'controller' => ArticleController::class,
+        'handler' => 'show',
+    ],
 ];

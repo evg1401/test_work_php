@@ -8,4 +8,7 @@ logs/*
 resources/*
 !resources/views/
 !resources/views/**
+!resources/styles/
+!resources/styles/**
+node_modules/
 vendor/

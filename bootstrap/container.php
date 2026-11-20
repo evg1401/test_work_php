@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Article\Infrastructure\DI\ArticleServiceProvider;
+use App\Category\Infrastructure\DI\CategoryServiceProvider;
+use App\Home\Infrastructure\DI\HomeServiceProvider;
 use App\Shared\Infrastructure\DI\DoctrineServiceProvider;
 use App\Shared\Infrastructure\DI\SmartyServiceProvider;
 use League\Container\Container;
@@ -17,6 +19,8 @@ $container->addServiceProvider(
     new DoctrineServiceProvider($databaseConfig, $isDevMode, $projectRoot),
 );
 $container->addServiceProvider(new SmartyServiceProvider($projectRoot));
+$container->addServiceProvider(new HomeServiceProvider());
+$container->addServiceProvider(new CategoryServiceProvider());
 $container->addServiceProvider(new ArticleServiceProvider());
 
 return $container;

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Routing;
 
+use App\Shared\Http\ViewModel\ErrorViewModel;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Http\Exception\NotFoundException;
 use League\Route\Router;
 use League\Route\Strategy\ApplicationStrategy;
+use Smarty\Smarty;
 
 final class RouteDispatcher
 {
@@ -36,11 +38,18 @@ final class RouteDispatcher
         try {
             $response = $router->dispatch($request);
         } catch (NotFoundException) {
+            $smarty = $container->get(Smarty::class);
+            $smarty->assign('view', new ErrorViewModel(
+                title: 'Страница не найдена',
+                statusCode: 404,
+                message: 'Запрошенный ресурс не найден.',
+            ));
+
             $response = (new Response())
                 ->withStatus(404)
-                ->withHeader('Content-Type', 'text/plain; charset=utf-8');
+                ->withHeader('Content-Type', 'text/html; charset=utf-8');
 
-            $response->getBody()->write('404 ресурс не найден');
+            $response->getBody()->write($smarty->fetch('errors/error.tpl'));
         }
 
         (new SapiEmitter())->emit($response);

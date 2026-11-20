@@ -1,0 +1,21 @@
+.site-header {
+    padding: 1rem;
+    background: #111827;
+
+    &__nav {
+        display: flex;
+        width: min(100%, 72rem);
+        margin: 0 auto;
+        gap: 1rem;
+    }
+
+    &__link {
+        color: #ffffff;
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            text-decoration: underline;
+        }
+    }
+}
