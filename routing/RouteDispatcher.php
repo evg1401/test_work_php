@@ -8,9 +8,10 @@ use App\Shared\Http\ViewModel\ErrorViewModel;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
-use League\Route\Http\Exception\NotFoundException;
+use League\Route\Http\Exception as HttpException;
 use League\Route\Router;
 use League\Route\Strategy\ApplicationStrategy;
+use League\Route\UrlGeneratorInterface;
 use Smarty\Smarty;
 
 final class RouteDispatcher
@@ -31,23 +32,25 @@ final class RouteDispatcher
 
         $router = new Router();
         $router->setStrategy($strategy);
+        $container->addShared(UrlGeneratorInterface::class, $router);
 
         $routes = require __DIR__ . '/web.php';
         (new RouteRegistrar($router))->register($routes);
 
         try {
             $response = $router->dispatch($request);
-        } catch (NotFoundException) {
+        } catch (HttpException $exception) {
+            $statusCode = $exception->getStatusCode();
+            $response = (new Response())
+                ->withStatus($statusCode)
+                ->withHeader('Content-Type', 'text/html; charset=utf-8');
+
             $smarty = $container->get(Smarty::class);
             $smarty->assign('view', new ErrorViewModel(
-                title: 'Страница не найдена',
-                statusCode: 404,
-                message: 'Запрошенный ресурс не найден.',
+                title: $response->getReasonPhrase(),
+                statusCode: $statusCode,
+                message: $exception->getMessage(),
             ));
-
-            $response = (new Response())
-                ->withStatus(404)
-                ->withHeader('Content-Type', 'text/html; charset=utf-8');
 
             $response->getBody()->write($smarty->fetch('errors/error.tpl'));
         }

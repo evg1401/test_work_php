@@ -7,6 +7,7 @@ namespace App\Home\Infrastructure\DI;
 use App\Category\Application\CategoryService;
 use App\Home\Http\HomeController;
 use League\Container\ServiceProvider\AbstractServiceProvider;
+use League\Route\UrlGeneratorInterface;
 use Smarty\Smarty;
 
 final class HomeServiceProvider extends AbstractServiceProvider
@@ -21,6 +22,7 @@ final class HomeServiceProvider extends AbstractServiceProvider
         $this->getContainer()
             ->add(HomeController::class)
             ->addArgument(CategoryService::class)
-            ->addArgument(Smarty::class);
+            ->addArgument(Smarty::class)
+            ->addArgument(UrlGeneratorInterface::class);
     }
 }

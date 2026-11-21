@@ -11,7 +11,7 @@
                 <ul class="category-directory__navigation">
                     {foreach $view->categories as $category}
                         <li>
-                            <a href="#category-{$category.slug|escape}">
+                            <a href="{$category.url|escape}">
                                 <span>{$category.title|escape}</span>
                                 <span>{$category.articles|count}</span>
                             </a>
@@ -27,7 +27,7 @@
                     <section class="category-section" id="category-{$category.slug|escape}">
                         <header class="category-section__header">
                             <h2>{$category.title|escape}</h2>
-                            <a href="/categories/{$category.slug|escape:'url'}">Все</a>
+                            <a href="{$category.url|escape}">Все</a>
                         </header>
 
                         <div class="category-section__articles">

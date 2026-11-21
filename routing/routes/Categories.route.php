@@ -6,12 +6,7 @@ use App\Category\Http\CategoryController;
 
 return [
     [
-        'method' => 'GET',
-        'path' => '/categories',
-        'controller' => CategoryController::class,
-        'handler' => 'index',
-    ],
-    [
+        'name' => 'category.show',
         'method' => 'GET',
         'path' => '/categories/{slug}',
         'controller' => CategoryController::class,

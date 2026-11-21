@@ -8,7 +8,8 @@ final class PaginationViewModel
 {
     public function __construct(
         public readonly int $currentPage,
-        public readonly int $totalPages,
+        public readonly int $total,
         public readonly string $baseUrl,
+        public readonly int $limit,
     ) {}
 }

@@ -26,8 +26,8 @@ class Article
     #[ORM\Column(type: Types::STRING, length: 256, unique: true)]
     private string $slug;
 
-    #[ORM\Column(type: Types::STRING, length: 256)]
-    private string $image;
+    #[ORM\Column(type: Types::STRING, length: 256, nullable: true)]
+    private ?string $image;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description;
@@ -42,7 +42,7 @@ class Article
     private DateTimeImmutable $publishedAt;
 
     /** @var Collection<int, Category> */
-    #[ORM\ManyToMany(targetEntity: Category::class)]
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'articles')]
     #[ORM\JoinTable(name: 'article_category')]
     #[ORM\JoinColumn(
         name: 'article_id',
@@ -62,7 +62,7 @@ class Article
     public function __construct(
         string $title,
         string $slug,
-        string $image,
+        ?string $image,
         ?string $description,
         string $text,
         DateTimeImmutable $publishedAt,
@@ -103,12 +103,12 @@ class Article
         $this->slug = $slug;
     }
 
-    public function getImage(): string
+    public function getImage(): ?string
     {
         return $this->image;
     }
 
-    public function setImage(string $image): void
+    public function setImage(?string $image): void
     {
         $this->image = $image;
     }

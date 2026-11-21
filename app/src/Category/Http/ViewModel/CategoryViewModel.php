@@ -9,9 +9,11 @@ use App\Shared\Http\ViewModel\PaginationViewModel;
 
 final class CategoryViewModel extends PageViewModel
 {
+    /**
+     * @param list<array{title: string, slug: string, description: ?string}> $articles
+     */
     public function __construct(
         string $title,
-        public readonly string $categorySlug,
         public readonly string $description,
         public readonly array $articles,
         public readonly PaginationViewModel $pagination,

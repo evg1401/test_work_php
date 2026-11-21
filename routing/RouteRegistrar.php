@@ -15,11 +15,15 @@ final class RouteRegistrar
     public function register(array $routes): void
     {
         foreach ($routes as $route) {
-            $this->router->map(
+            $registeredRoute = $this->router->map(
                 $route['method'],
                 $route['path'],
                 [$route['controller'], $route['handler']],
             );
+
+            if (isset($route['name'])) {
+                $registeredRoute->setName($route['name']);
+            }
         }
     }
 }

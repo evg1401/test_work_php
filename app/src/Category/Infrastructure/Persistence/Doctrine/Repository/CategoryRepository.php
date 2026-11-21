@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Category\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Category\Infrastructure\Persistence\Doctrine\Entity\Category;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -12,6 +13,31 @@ final class CategoryRepository
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ) {}
+
+    public function findBySlug(string $slug): ?Category
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('category')
+            ->from(Category::class, 'category')
+            ->where('category.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function countArticlesBySlug(string $slug): int
+    {
+        return (int) $this->entityManager
+            ->createQueryBuilder()
+            ->select('COUNT(article.id)')
+            ->from(Category::class, 'category')
+            ->leftJoin('category.articles', 'article')
+            ->where('category.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
     public function findWithLatestArticles(int $articlesLimit): array
     {
@@ -48,40 +74,12 @@ final class CategoryRepository
             ORDER BY ranked.category_id, ranked.published_at DESC
             SQL;
 
-        $rows = $this->entityManager
+        return $this->entityManager
             ->getConnection()
             ->fetchAllAssociative(
                 $sql,
                 ['articlesLimit' => $articlesLimit],
                 ['articlesLimit' => ParameterType::INTEGER],
             );
-
-        $categories = [];
-
-        foreach ($rows as $row) {
-            $categoryId = (int) $row['category_id'];
-
-            if (!isset($categories[$categoryId])) {
-                $categories[$categoryId] = [
-                    'id' => $categoryId,
-                    'title' => $row['category_title'],
-                    'slug' => $row['category_slug'],
-                    'articles' => [],
-                ];
-            }
-
-            $categories[$categoryId]['articles'][] = [
-                'id' => (int) $row['id'],
-                'title' => $row['title'],
-                'slug' => $row['slug'],
-                'image' => $row['image'],
-                'description' => $row['description'],
-                'text' => $row['text'],
-                'views' => (int) $row['views'],
-                'publishedAt' => $row['published_at'],
-            ];
-        }
-
-        return array_values($categories);
     }
 }
