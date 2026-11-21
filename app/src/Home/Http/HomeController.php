@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Home\Http;
 
+use App\Category\Application\CategoryService;
 use App\Home\Http\ViewModel\HomeViewModel;
 use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -13,6 +14,7 @@ use Smarty\Smarty;
 final class HomeController
 {
     public function __construct(
+        private readonly CategoryService $categoryService,
         private readonly Smarty $smarty,
     ) {}
 
@@ -20,15 +22,7 @@ final class HomeController
     {
         $view = new HomeViewModel(
             title: 'Главная',
-            intro: 'последние статьи',
-            categories: [
-                ['id' => 1, 'title' => 'категория 1', 'description' => 'описание'],
-                ['id' => 2, 'title' => 'категория 2', 'description' => 'описание'],
-            ],
-            articles: [
-                ['id' => 1, 'title' => 'статья 1', 'description' => 'описание'],
-                ['id' => 2, 'title' => 'статья 1', 'description' => 'описание'],
-            ],
+            categories: $this->categoryService->findWithLatestArticles(),
         );
         $this->smarty->assign('view', $view);
 

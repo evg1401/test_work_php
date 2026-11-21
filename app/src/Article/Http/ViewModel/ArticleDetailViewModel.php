@@ -10,7 +10,7 @@ final class ArticleDetailViewModel extends PageViewModel
 {
     public function __construct(
         string $title,
-        public readonly int $articleId,
+        public readonly string $articleSlug,
         public readonly string $description,
         public readonly string $text,
         public readonly int $views,

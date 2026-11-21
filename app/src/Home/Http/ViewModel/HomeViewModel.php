@@ -10,9 +10,7 @@ final class HomeViewModel extends PageViewModel
 {
     public function __construct(
         string $title,
-        public readonly string $intro,
         public readonly array $categories,
-        public readonly array $articles,
     ) {
         parent::__construct($title);
     }

@@ -13,7 +13,7 @@ return [
     ],
     [
         'method' => 'GET',
-        'path' => '/articles/{id:number}',
+        'path' => '/articles/{slug}',
         'controller' => ArticleController::class,
         'handler' => 'show',
     ],

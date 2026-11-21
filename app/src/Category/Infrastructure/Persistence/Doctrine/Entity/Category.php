@@ -16,15 +16,19 @@ class Category
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::STRING, length: 256)]
+    #[ORM\Column(type: Types::STRING, length: 256, unique: true)]
     private string $title;
+
+    #[ORM\Column(type: Types::STRING, length: 256, unique: true)]
+    private string $slug;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description;
 
-    public function __construct(string $title, ?string $description)
+    public function __construct(string $title, string $slug, ?string $description)
     {
         $this->title = $title;
+        $this->slug = $slug;
         $this->description = $description;
     }
 
@@ -41,6 +45,16 @@ class Category
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
     }
 
     public function getDescription(): ?string

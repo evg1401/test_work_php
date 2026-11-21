@@ -13,7 +13,7 @@
         <footer class="article__categories">
             Категории:
             {foreach $view->categories as $category name='categories'}
-                <a href="/categories/{$category.id}">{$category.title|escape}</a>{if !$smarty.foreach.categories.last}, {/if}
+                <a href="/categories/{$category.slug|escape:'url'}">{$category.title|escape}</a>{if !$smarty.foreach.categories.last}, {/if}
             {/foreach}
         </footer>
     </article>

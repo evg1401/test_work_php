@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Article\Infrastructure\Persistence\Doctrine\Entity;
 
 use App\Category\Infrastructure\Persistence\Doctrine\Entity\Category;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -19,8 +20,14 @@ class Article
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::STRING, length: 256)]
+    #[ORM\Column(type: Types::STRING, length: 256, unique: true)]
     private string $title;
+
+    #[ORM\Column(type: Types::STRING, length: 256, unique: true)]
+    private string $slug;
+
+    #[ORM\Column(type: Types::STRING, length: 256)]
+    private string $image;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description;
@@ -30,6 +37,9 @@ class Article
 
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
     private int $views;
+
+    #[ORM\Column(name: 'published_at', type: Types::DATETIME_IMMUTABLE)]
+    private DateTimeImmutable $publishedAt;
 
     /** @var Collection<int, Category> */
     #[ORM\ManyToMany(targetEntity: Category::class)]
@@ -46,17 +56,24 @@ class Article
         nullable: false,
         onDelete: 'CASCADE',
     )]
+    
     private Collection $categories;
 
     public function __construct(
         string $title,
+        string $slug,
+        string $image,
         ?string $description,
         string $text,
+        DateTimeImmutable $publishedAt,
         int $views = 0,
     ) {
         $this->title = $title;
+        $this->slug = $slug;
+        $this->image = $image;
         $this->description = $description;
         $this->text = $text;
+        $this->publishedAt = $publishedAt;
         $this->views = $views;
         $this->categories = new ArrayCollection();
     }
@@ -74,6 +91,26 @@ class Article
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): void
+    {
+        $this->image = $image;
     }
 
     public function getDescription(): ?string
@@ -104,6 +141,16 @@ class Article
     public function setViews(int $views): void
     {
         $this->views = $views;
+    }
+
+    public function getPublishedAt(): DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+
+    public function setPublishedAt(DateTimeImmutable $publishedAt): void
+    {
+        $this->publishedAt = $publishedAt;
     }
 
     /** @return Collection<int, Category> */

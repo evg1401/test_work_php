@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Category\Infrastructure\DI;
 
+use App\Category\Application\CategoryService;
 use App\Category\Http\CategoryController;
+use App\Category\Infrastructure\Persistence\Doctrine\Repository\CategoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use Smarty\Smarty;
 
@@ -12,13 +15,28 @@ final class CategoryServiceProvider extends AbstractServiceProvider
 {
     public function provides(string $id): bool
     {
-        return $id === CategoryController::class;
+        return in_array($id, [
+            CategoryService::class,
+            CategoryController::class,
+            CategoryRepository::class,
+        ], true);
     }
 
     public function register(): void
     {
-        $this->getContainer()
+        $container = $this->getContainer();
+
+        $container
+            ->addShared(CategoryRepository::class)
+            ->addArgument(EntityManagerInterface::class);
+
+        $container
+            ->addShared(CategoryService::class)
+            ->addArgument(CategoryRepository::class);
+
+        $container
             ->add(CategoryController::class)
+            ->addArgument(CategoryService::class)
             ->addArgument(Smarty::class);
     }
 }

@@ -43,16 +43,16 @@ final class ArticleController
 
     public function show(ServerRequestInterface $request, array $args): ResponseInterface
     {
-        $articleId = (int) $args['id'];
+        $articleSlug = (string) $args['slug'];
         $view = new ArticleDetailViewModel(
-            title: sprintf('Статья %d', $articleId),
-            articleId: $articleId,
+            title: sprintf('Статья %s', $articleSlug),
+            articleSlug: $articleSlug,
             description: 'Описание',
             text: 'Текст',
             views: 1,
             categories: [
-                ['id' => 1, 'title' => 'категория 1'],
-                ['id' => 2, 'title' => 'категория 2'],
+                ['slug' => 'category-1', 'title' => 'категория 1'],
+                ['slug' => 'category-2', 'title' => 'категория 2'],
             ],
         );
         $this->smarty->assign('view', $view);

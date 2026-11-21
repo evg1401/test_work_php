@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Http\DTO;
+namespace App\Shared\Application\DTO\Input;
 
-class ListQueryDto
+class ListRequestDto
 {
     public readonly string $order;
 
@@ -13,14 +13,6 @@ class ListQueryDto
         string $order = 'DESC',
     ) {
         $this->order = self::normalizeOrder($order);
-    }
-
-    public static function fromArray(array $query): self
-    {
-        return new self(
-            sort: (string) ($query['sort'] ?? 'id'),
-            order: (string) ($query['order'] ?? 'DESC'),
-        );
     }
 
     private static function normalizeOrder(string $order): string

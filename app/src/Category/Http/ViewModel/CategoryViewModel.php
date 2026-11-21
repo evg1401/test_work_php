@@ -11,7 +11,7 @@ final class CategoryViewModel extends PageViewModel
 {
     public function __construct(
         string $title,
-        public readonly int $categoryId,
+        public readonly string $categorySlug,
         public readonly string $description,
         public readonly array $articles,
         public readonly PaginationViewModel $pagination,
