@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'articles')]
+#[ORM\Index(name: 'IDX_ARTICLES_PUBLISHED_AT', columns: ['published_at'])]
 class Article
 {
     #[ORM\Id]
