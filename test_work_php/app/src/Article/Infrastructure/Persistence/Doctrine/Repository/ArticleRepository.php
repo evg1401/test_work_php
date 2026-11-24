@@ -52,33 +52,39 @@ final class ArticleRepository
         $sql = <<<'SQL'
             WITH source_categories AS (
                 SELECT
-                    a.id AS source_article_id,
-                    ac.category_id
-                FROM articles a
-                JOIN article_category ac
-                    ON ac.article_id = a.id
-                    AND ac.is_primary = FALSE
-                WHERE a.slug = :slug
-                ORDER BY ac.category_id
+                    articles.id AS source_article_id,
+                    article_category.category_id
+                FROM articles
+                INNER JOIN article_category
+                    ON article_category.article_id = articles.id
+                    AND article_category.is_primary = FALSE
+                WHERE articles.slug = :slug
+                ORDER BY article_category.category_id ASC
                 LIMIT :categoriesLimit
+            ),
+            ranked_articles AS (
+                SELECT
+                    link.category_id,
+                    candidate.id,
+                    candidate.published_at,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY link.category_id
+                        ORDER BY candidate.published_at DESC, candidate.id DESC
+                    ) AS position
+                FROM source_categories
+                INNER JOIN article_category link
+                    ON link.category_id = source_categories.category_id
+                INNER JOIN articles candidate
+                    ON candidate.id = link.article_id
+                    AND candidate.id != source_categories.source_article_id
             )
             SELECT DISTINCT
-                a.id,
-                a.published_at
-            FROM source_categories sc
-            JOIN articles a
-                ON a.id = (
-                    SELECT candidate.id
-                    FROM article_category ac
-                    JOIN articles candidate
-                        ON candidate.id = ac.article_id
-                    WHERE ac.category_id = sc.category_id
-                    AND candidate.id != sc.source_article_id
-                    ORDER BY candidate.published_at DESC, candidate.id DESC
-                    LIMIT 1
-                )
-            ORDER BY a.published_at DESC, a.id DESC
-            LIMIT :articlesLimit;
+                ranked_articles.id,
+                ranked_articles.published_at
+            FROM ranked_articles
+            WHERE ranked_articles.position = 1
+            ORDER BY ranked_articles.published_at DESC, ranked_articles.id DESC
+            LIMIT :articlesLimit
             SQL;
 
         return array_map(
